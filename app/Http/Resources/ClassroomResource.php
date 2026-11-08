@@ -29,8 +29,11 @@ class ClassroomResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'vacancies' => $this->vacancies,
+            'course_id' => $this->course_id,
+            'course' => new CourseResource($this->whenLoaded('course')),
+            'users' => UserResource::collection($this->whenLoaded('users')),
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
         ];
     }
 }

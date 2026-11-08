@@ -68,13 +68,18 @@
                             "schema": {
                                 "required": [
                                     "name",
-                                    "vacancies"
+                                    "vacancies",
+                                    "course_id"
                                 ],
                                 "properties": {
+                                    "course_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
                                     "name": {
                                         "type": "string",
                                         "example": "Turma A",
-                                        "maxLength": 500,
+                                        "maxLength": 255,
                                         "minLength": 2
                                     },
                                     "vacancies": {
@@ -190,13 +195,18 @@
                             "schema": {
                                 "required": [
                                     "name",
-                                    "vacancies"
+                                    "vacancies",
+                                    "course_id"
                                 ],
                                 "properties": {
+                                    "course_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
                                     "name": {
                                         "type": "string",
                                         "example": "Turma A",
-                                        "maxLength": 500,
+                                        "maxLength": 255,
                                         "minLength": 2
                                     },
                                     "vacancies": {
@@ -269,6 +279,251 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/NotFound"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/classrooms/{id}/users": {
+            "post": {
+                "tags": [
+                    "Turmas"
+                ],
+                "summary": "Adiciona ou remove um usuário da turma",
+                "operationId": "8a43ae387d26c02504b0838448b07b5a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "action"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "action": {
+                                        "type": "string",
+                                        "enum": [
+                                            "add",
+                                            "remove"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Vínculo atualizado; retorna turma com curso e usuários"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationError"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/courses": {
+            "get": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Lista cursos e suas turmas",
+                "operationId": "75403048c36d79fe464ce4716c204c61",
+                "responses": {
+                    "200": {
+                        "description": "Operação realizada"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Cria um curso",
+                "operationId": "56ff5a96b473881afe594ca81aeb754b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "TADS"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Operação realizada"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/courses/{id}": {
+            "get": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Exibe um curso e suas turmas",
+                "operationId": "703f82b2a4cf2b6bec94909bbbc1ea7a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operação realizada"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Atualiza um curso",
+                "operationId": "3a7361097bd69b58c4a6d2bf4bdd283f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "TADS"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operação realizada"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Exclui um curso sem turmas",
+                "operationId": "46eece04198b0ea6faa7697bffa4f469",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Operação realizada"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthenticated"
                     }
                 },
                 "security": [
@@ -770,6 +1025,10 @@
         {
             "name": "Turmas",
             "description": "Turmas"
+        },
+        {
+            "name": "Cursos",
+            "description": "Cursos"
         },
         {
             "name": "Autenticação",

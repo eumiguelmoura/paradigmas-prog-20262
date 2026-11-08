@@ -11,8 +11,7 @@ use OpenApi\Attributes as OA;
 
 class ClassroomController extends Controller
 {
-    public function __construct(private ClassroomService $classroomService)
-    {}
+    public function __construct(private ClassroomService $classroomService) {}
 
     /**
      * Display a listing of the resource.
@@ -48,9 +47,10 @@ class ClassroomController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ['name', 'vacancies'],
+                required: ['name', 'vacancies', 'course_id'],
                 properties: [
-                    new OA\Property(property: 'name', type: 'string', minLength: 2, maxLength: 500, example: 'Turma A'),
+                    new OA\Property(property: 'course_id', type: 'integer', example: 1),
+                    new OA\Property(property: 'name', type: 'string', minLength: 2, maxLength: 255, example: 'Turma A'),
                     new OA\Property(property: 'vacancies', type: 'integer', minimum: 1, maximum: 500, example: 30),
                 ]
             )
@@ -98,9 +98,10 @@ class ClassroomController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ['name', 'vacancies'],
+                required: ['name', 'vacancies', 'course_id'],
                 properties: [
-                    new OA\Property(property: 'name', type: 'string', minLength: 2, maxLength: 500, example: 'Turma A'),
+                    new OA\Property(property: 'course_id', type: 'integer', example: 1),
+                    new OA\Property(property: 'name', type: 'string', minLength: 2, maxLength: 255, example: 'Turma A'),
                     new OA\Property(property: 'vacancies', type: 'integer', minimum: 1, maximum: 500, example: 30),
                 ]
             )
@@ -137,5 +138,28 @@ class ClassroomController extends Controller
         $this->classroomService->destroy($id);
 
         return response()->noContent();
+    }
+
+    #[OA\Post(
+        path: '/classrooms/{id}/users',
+        summary: 'Adiciona ou remove um usuário da turma',
+        security: [['sanctum' => []]], tags: ['Turmas'],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        requestBody: new OA\RequestBody(required: true, content: new OA\JsonContent(
+            required: ['user_id', 'action'], properties: [
+                new OA\Property(property: 'user_id', type: 'integer', example: 1),
+                new OA\Property(property: 'action', type: 'string', enum: ['add', 'remove']),
+            ]
+        )),
+        responses: [
+            new OA\Response(response: 200, description: 'Vínculo atualizado; retorna turma com curso e usuários'),
+            new OA\Response(response: 401, ref: '#/components/responses/Unauthenticated'),
+            new OA\Response(response: 404, ref: '#/components/responses/NotFound'),
+            new OA\Response(response: 422, ref: '#/components/responses/ValidationError'),
+        ]
+    )]
+    public function manageUser(\App\Http\Requests\ClassroomUserRequest $request, string $id)
+    {
+        return new ClassroomResource($this->classroomService->manageUser($id, $request->validated()));
     }
 }
